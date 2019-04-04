@@ -1,5 +1,6 @@
 package flappybird;
 
+import java.awt.Color;
 import java.awt.Point;
 
 /**
@@ -9,6 +10,7 @@ public abstract class Tunel {
   private Point ubicacion;
   private int anchura;
   private int altura;
+  private Color color;
   
   abstract void dibujar();
 }
