@@ -11,6 +11,10 @@ public abstract class Tunel {
   private int anchura;
   private int altura;
   private Color color;
+
+  public Tunel() {
+    
+  }
   
   abstract void dibujar();
 }
