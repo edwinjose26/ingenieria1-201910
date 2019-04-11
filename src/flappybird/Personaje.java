@@ -4,6 +4,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.Point;
+import java.awt.Rectangle;
 import javax.swing.ImageIcon;
 
 /**
@@ -14,6 +15,11 @@ public class Personaje {
   private int puntaje;
   private Dimension dimension = new Dimension(50, 50);
   private Image imagen = new ImageIcon( getClass().getResource("../imagenes/flappy.png") ).getImage();
+
+  boolean chocaCon(Tunel tunel) {
+    Rectangle rectangulo = new Rectangle(posicion, dimension);
+    return rectangulo.intersects(tunel);
+  }
   enum Direccion {ARRIBA, ABAJO, ADELANTE, EN_EL_SUELO};
   Direccion direccion;
   private int cantidadASubir;

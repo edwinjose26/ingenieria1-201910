@@ -3,19 +3,38 @@ package flappybird;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Point;
+import java.awt.Rectangle;
 import javax.swing.JPanel;
 
 /**
  * @author josearielpereyra
  */
 public class Pasadizo {
-  private static final int anchuraTunel = 80;
+  public static final int anchuraTunel = 80;
   private static final int alturaDeLaCabeza = 30;
   private final int altura;
   int alturaDelTunelDeArriba;
   Point posicion;
   JPanel panelDeJuego;
   Color color;
+  private Rectangle rectanguloDeArriba;
+  private Rectangle rectanguloDeAbajo;
+
+  public Rectangle getRectanguloDeArriba() {
+    return rectanguloDeArriba;
+  }
+
+  public void setRectanguloDeArriba(Rectangle rectanguloDeArriba) {
+    this.rectanguloDeArriba = rectanguloDeArriba;
+  }
+
+  public Rectangle getRectanguloDeAbajo() {
+    return rectanguloDeAbajo;
+  }
+
+  public void setRectanguloDeAbajo(Rectangle rectanguloDeAbajo) {
+    this.rectanguloDeAbajo = rectanguloDeAbajo;
+  }
 
   public Pasadizo(JPanel panelDeJuego, Point posicion, int altura, Color color) {
     this.alturaDelTunelDeArriba = posicion.y;
@@ -23,6 +42,14 @@ public class Pasadizo {
     this.panelDeJuego = panelDeJuego;
     this.color = color;
     this.altura = altura;
+  }
+  
+  public Rectangle obtenerRectanguloDeArriba() {
+    return rectanguloDeArriba;
+  }
+  
+  public Rectangle obtenerRectanguloDeAbajo() {
+    return rectanguloDeAbajo;
   }
   
   public void dibujar(Graphics g) {
