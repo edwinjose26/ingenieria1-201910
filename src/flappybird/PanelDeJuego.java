@@ -24,16 +24,19 @@ public class PanelDeJuego extends JPanel{
   ArrayList<Pasadizo> pasadizos;
   Personaje personaje;
   int totalDePasadizos;
-  int alturaPasadizos = 150;
+  int alturaPasadizos = 200;
   int xInicial = 10;
   int yFlappy = 0;  
   Color colorTunel = new Color(165, 198, 93);
   Random numerosAleatorios = new Random();
   boolean elJuegoHaTerminado;
   
+  ArrayList<Pasadizo> pasadizosVisibles;
+  
   private final Timer temporizador;
   private final Timer temporizadorPersonaje;
   private int alturaPiso;
+  private int yPiso;
 
   public PanelDeJuego() {
     reiniciarJuego();
@@ -59,8 +62,14 @@ public class PanelDeJuego extends JPanel{
           personaje.setDireccion(Personaje.Direccion.ARRIBA);
         }
         else if( e.getKeyCode() == KeyEvent.VK_SPACE) {
-          xInicial = getWidth()/ 2 + 100;
-          jugar();
+          if(personaje.direccion == Personaje.Direccion.EN_EL_SUELO) {
+            reiniciarJuego();
+            repaint();
+          }
+          else {
+            xInicial = getWidth()/ 2 + 100;
+            jugar();
+          }
         }
       }
       
@@ -87,6 +96,7 @@ public class PanelDeJuego extends JPanel{
 
   public void reiniciarJuego() {
     pasadizos = new ArrayList<>();
+    pasadizosVisibles = new ArrayList<>();
     totalDePasadizos = 1000;
     personaje = new Personaje( new Point(200, 200), 0, new Dimension(50, 50), "flappy.png");
     personaje.setDireccion(Personaje.Direccion.ADELANTE);
@@ -94,6 +104,7 @@ public class PanelDeJuego extends JPanel{
   }
   
   private void jugar(){
+    //crear los pasadizos cuando no existen
     if(pasadizos.size() == 0) {
       Random numerosAleatorios = new Random();
       int anchuraTunel = 100;
@@ -144,7 +155,7 @@ public class PanelDeJuego extends JPanel{
     int anchura = getWidth();
     int altura = getHeight();
     alturaPiso = altura/10;
-    int yPiso = altura - alturaPiso;
+    yPiso = altura - alturaPiso;
     
     //dibujar fondo
     g.setColor(new Color(50, 50, 50));
@@ -157,7 +168,7 @@ public class PanelDeJuego extends JPanel{
     g.fillOval(100, 100, 150, 150);
     
     xInicial -= 20;
-    if(xInicial < -(210 * 30) ) {
+    if(pasadizos.size() > 0 && xInicial > pasadizos.get(pasadizos.size() - 1).posicion.x + Pasadizo.anchuraTunel) {
       xInicial = getWidth();
     }
    
@@ -175,8 +186,9 @@ public class PanelDeJuego extends JPanel{
     g.drawRect(0, yPiso, anchura, alturaPiso / 5);
     
     personaje.moverse();
-    if(personaje.getPosicion().y >= yPiso - personaje.getDimension().height ) {
-      personaje.setPosicion( new Point(personaje.getPosicion().x, yPiso - personaje.getDimension().height) );
+    
+    if( elJugadorPerdio() ) {
+      personaje.setPosicion( new Point(personaje.getPosicion().x, yPiso - personaje.getDimension().height + 5) );
       personaje.setDireccion(Personaje.Direccion.EN_EL_SUELO);
       elJuegoHaTerminado = true;
       personaje.moverse();
@@ -185,20 +197,48 @@ public class PanelDeJuego extends JPanel{
     }
     personaje.dibujar(g);
     
-    g.setFont(new Font("serif", Font.BOLD, 30));
+    g.setColor(Color.WHITE);
+    g.setFont(new Font("Times", Font.BOLD, 40));
     g.drawString("" + personaje.getPuntaje(), getWidth()/2, getHeight()/3);
+    
   }
 
   private void dibujarTuneles( Graphics g ) {
     int x = xInicial;
+    pasadizosVisibles = new ArrayList<>();
     for (int i = 0; i < pasadizos.size(); i ++) {
       Pasadizo pasadizo = pasadizos.get(i);
       pasadizo.posicion.x -= 5;
-      if(pasadizo.posicion.x <= getWidth() &&  pasadizo.posicion.x > - 200) {
-        personaje.setPuntaje(i);
+      if(pasadizo.posicion.x <= getWidth() &&  pasadizo.posicion.x >= -200) {
         pasadizo.dibujar(g);
-        System.out.println(pasadizo.posicion);
+        
+        g.setColor(Color.RED);
+        g.setFont(new Font("Arial", Font.BOLD, 20));
+        g.drawString("" + (i + 1), pasadizo.posicion.x + 10, 40);
+        
+        pasadizosVisibles.add(pasadizo);
+        
+        if(personaje.getPosicion().x > pasadizo.posicion.x + Pasadizo.anchuraTunel) {
+          personaje.setPuntaje(i + 1);
+        }
       }
     }
+  }
+
+  private boolean elJugadorPerdio() {
+    boolean chocoArriba = personaje.getPosicion().y <= 0;
+    boolean chocoAbajo = personaje.getPosicion().y >= yPiso - personaje.getDimension().height;
+    
+    boolean chocoConUnTunel = false;
+    
+    for(Pasadizo pasadizo : pasadizosVisibles) {
+      if( personaje.chocaCon( pasadizo.getTunelInferior() ) ||
+        personaje.chocaCon( pasadizo.getTunelSuperior() ) ){
+        chocoConUnTunel = true;
+        break;
+      }
+    }
+    
+    return chocoArriba || chocoAbajo || chocoConUnTunel;
   }
 }

@@ -17,13 +17,19 @@ public class Personaje {
   private Image imagen = new ImageIcon( getClass().getResource("../imagenes/flappy.png") ).getImage();
 
   boolean chocaCon(Tunel tunel) {
-    Rectangle rectangulo = new Rectangle(posicion, dimension);
-    return rectangulo.intersects(tunel);
+    Rectangle rectanguloImagen = new Rectangle(posicion, dimension);
+    return rectanguloImagen.intersects(tunel);
   }
   enum Direccion {ARRIBA, ABAJO, ADELANTE, EN_EL_SUELO};
   Direccion direccion;
-  private int cantidadASubir;
-  private int cantidadABajar;
+  
+  private int cantidadABajar = 1;
+  private int maximoABajar = 5;
+  
+  private int cantidadASubir = 1;
+  private int maximoASubir = 10;
+  
+
 
   public Personaje(Point posicion, int puntaje, Dimension dimension, String imagen) {
     this.posicion = posicion;
@@ -34,13 +40,17 @@ public class Personaje {
   }
   
   public void subir() {
+    cantidadABajar = 1;
+    cantidadASubir = (cantidadASubir < maximoASubir) ? cantidadASubir + 4 : maximoASubir;
     setImagen( "flappyArriba.png" );
-    posicion.y -= 15;
+    posicion.y -= cantidadASubir;
   }
   
   public void bajar() {
+    cantidadASubir = 1;
+    cantidadABajar = (cantidadABajar < maximoABajar) ? cantidadABajar + 2 : maximoABajar;
     setImagen( "flappyAbajo.png" );
-    posicion.y += 10;
+    posicion.y += cantidadABajar;
   }
   
   public void moverse() {

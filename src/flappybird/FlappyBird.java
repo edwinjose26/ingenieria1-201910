@@ -1,9 +1,5 @@
 package flappybird;
 
-import java.awt.BorderLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import javax.swing.JButton;
 import javax.swing.JFrame;
 
 /**
@@ -20,16 +16,6 @@ public class FlappyBird {
     PanelDeJuego panelDeJuego = new PanelDeJuego();
     ventana.add( panelDeJuego );
     
-    JButton botonReiniciar = new JButton("Reiniciar Juego");
-    ventana.add(botonReiniciar, BorderLayout.NORTH);
-    
-    botonReiniciar.addActionListener(new ActionListener() {
-      @Override
-      public void actionPerformed(ActionEvent e) {
-        panelDeJuego.reiniciarJuego();
-        panelDeJuego.repaint();
-      }
-    });
     ventana.setVisible(true);
   } 
 }
